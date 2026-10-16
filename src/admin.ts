@@ -22,7 +22,7 @@ async function load(){
     element('#total').textContent=data.total;
     for(const record of data.records as Registration[]){
       const tr=document.createElement('tr');
-      for(const key of ['full_name','email','whatsapp','school','created_at','status'] as const){
+      for(const key of ['full_name','email','whatsapp','school','gender','created_at','status'] as const){
         const td=document.createElement('td');td.textContent=key==='created_at'?formatDate(record[key]):record[key];
         if(key==='full_name'){td.className='name-cell';const id=document.createElement('span');id.className='record-id';id.textContent=record.id;td.append(id);}
         if(key==='status'){const span=document.createElement('span');span.className='status-pill';span.textContent=record.status;td.replaceChildren(span);}
@@ -41,7 +41,7 @@ async function details(id:string,button:HTMLButtonElement){
   try{
     const data=await(await api('/api/admin/registrations/'+encodeURIComponent(id))).json();
     const dl=element('#details');dl.replaceChildren();
-    for(const [label,key] of [['Registration ID','id'],['Full Name','full_name'],['Email Address','email'],['WhatsApp Number','whatsapp'],['School','school'],['Age (years)','age'],['Date of Birth','dob'],["Guardian's Email Address",'guardian_email'],["Guardian's Phone Number",'guardian_phone'],['Registration Date','created_at'],['Registration Status','status'],['Consent provided by','consent_role'],['Privacy notice version','consent_version']]){
+    for(const [label,key] of [['Registration ID','id'],['Full Name','full_name'],['Email Address','email'],['WhatsApp Number','whatsapp'],['School','school'],['Gender','gender'],['Age (years)','age'],['Date of Birth','dob'],["Guardian's Email Address",'guardian_email'],["Guardian's Phone Number",'guardian_phone'],['Registration Date','created_at'],['Registration Status','status'],['Consent provided by','consent_role'],['Privacy notice version','consent_version']]){
       const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=['created_at','dob'].includes(key) && data[key]?formatDate(data[key]):String(data[key] ?? 'Not provided');dl.append(dt,dd);
     }
     element<HTMLDialogElement>('#details-dialog').showModal();

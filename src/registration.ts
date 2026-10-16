@@ -16,7 +16,8 @@ function showErrors(errors: Record<string, string | string[]>) {
 }
 function validate(data: Record<string, string | boolean | number>) {
   const errors: Record<string, string>={};
-  for(const key of ['full_name','email','whatsapp','school','age','dob','guardian_email','guardian_phone']) if(data[key] === '' || data[key] === undefined) errors[key]='This field is required.';
+  for(const key of ['full_name','email','whatsapp','school','gender','age','dob','guardian_email','guardian_phone']) if(data[key] === '' || data[key] === undefined) errors[key]='This field is required.';
+  if(data.gender && !['female','male','non_binary','prefer_not_to_say'].includes(String(data.gender))) errors.gender='Select a gender option.';
   for(const key of ['email','guardian_email']) if(data[key] && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data[key]))) errors[key]='Enter a valid email address.';
   for(const key of ['whatsapp','guardian_phone']) if(data[key] && !validPhone(String(data[key]))) errors[key]='Use an international number beginning with + and country code (8–15 digits).';
   const age=Number(data.age);

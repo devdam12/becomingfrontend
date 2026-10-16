@@ -4,7 +4,7 @@ export function element<T extends HTMLElement = HTMLElement>(selector: string): 
   return result;
 }
 export interface Registration {
-  id: string; full_name: string; email: string; whatsapp: string; school: string;
+  id: string; full_name: string; email: string; whatsapp: string; school: string; gender: string;
   age: number; dob: string; guardian_email: string; guardian_phone: string; created_at: string;
   status: string; consent_role: string; consent_version: string;
 }
