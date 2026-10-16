@@ -31,7 +31,7 @@ The frontend proxies `/api/*` to `BACKEND_URL`, preserving request Origin and th
 1. Open `/`, enter all required attendee and guardian fields, and use international phone numbers beginning with `+`, e.g. `+2348031234567`.
 2. Enter age as a whole number from 0 to 120. For someone under 18, their parent/legal guardian must complete the form and provide consent.
 3. Complete registration. The success screen displays the conference date and registration ID. Invalid inputs produce field-specific errors; failures preserve the entered values.
-4. Create an admin using the backend’s `npm run admin:create`, then open `/admin/login` on the frontend and sign in.
+4. Create an admin using the backend’s `npm run admin:create`, then open `/admin/login` on the frontend and sign in. The frontend must be deployed as a Node web service, not a static site, because its server protects `/admin` and proxies `/api/*`.
 5. Search by name/email/school, filter by UTC registration date, and navigate pages. Open Details only when guardian contacts or age are needed.
 6. Click **Download All Registrations (CSV)**. It downloads every current record regardless of the table’s filters or current page. Open the file in Excel or Google Sheets. Retry the same button after an error.
 
@@ -55,4 +55,4 @@ Responsive layouts, labeled inputs, keyboard focus, error associations, status/a
 
 Recent update: numeric age replaces the date-of-birth picker and the sixth CSV column is now Age. The submitter-role dropdown and its helper text were removed. Existing DOB records are preserved, with age at registration derived for details/export. Existing application DOB collection validators are upgraded compatibly at startup.
 
-Current form update: both numeric age and date of birth are required. DOB is validated as a real, non-future calendar date and age must match DOB. Both are saved, shown only in protected details, and exported as Date of Birth followed by Age (11 CSV columns total). Existing age-only records retain a blank DOB; no date is invented. The submitter-role dropdown remains removed.
+Current form update: gender, numeric age, and date of birth are required. Gender options are Female, Male, Non-binary, and Prefer not to say. DOB is validated as a real, non-future calendar date and age must match DOB. Gender and both age fields are saved, shown in the protected admin view, and exported. Existing age-only records retain a blank DOB and older records without gender remain readable; no value is invented.
