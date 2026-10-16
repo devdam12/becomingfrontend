@@ -6,16 +6,28 @@ const {once} = require('node:events');
 test('compiled Vercel handlers load and serve protected admin routes', async () => {
   const login = require('../dist/vercel/api/admin-login.js').default;
   const admin = require('../dist/vercel/api/admin.js').default;
-  const proxy = require('../dist/vercel/api/[...path].js').default;
+  const proxy = require('../dist/vercel/api/gateway.js').default;
   assert.equal(typeof proxy, 'function');
-  const backend = createServer((req, res) => {
+  const backend = createServer(async (req, res) => {
+    if(req.method === 'POST') {
+      assert.equal(req.url, '/api/admin/login?returnTo=admin');
+      assert.equal(req.headers['x-conference-proxy'], 'x'.repeat(32));
+      assert.equal(req.headers.origin, 'https://frontend.example');
+      let body = '';
+      for await (const chunk of req) body += chunk;
+      assert.deepEqual(JSON.parse(body), {email: 'admin@example.com', password: 'test-password'});
+      res.writeHead(200, {'Content-Type': 'application/json', 'Set-Cookie': 'conference_session=valid; HttpOnly; Path=/'});
+      res.end('{"ok":true}');
+      return;
+    }
     assert.equal(req.url, '/api/admin/session');
     assert.equal(req.headers['x-conference-proxy'], 'x'.repeat(32));
     res.writeHead(req.headers.cookie === 'conference_session=valid' ? 200 : 401);
     res.end('{}');
   });
   const frontend = createServer((req, res) => {
-    Promise.resolve((req.url === '/admin/login' ? login : admin)(req, res)).catch(error => {
+    const handler = req.url.startsWith('/api/') ? proxy : req.url === '/admin/login' ? login : admin;
+    Promise.resolve(handler(req, res)).catch(error => {
       res.writeHead(500);
       res.end(String(error));
     });
@@ -46,6 +58,16 @@ test('compiled Vercel handlers load and serve protected admin routes', async () 
     assert.equal(authenticated.status, 200);
     assert.match(await authenticated.text(), /<html/i);
     assert.equal(authenticated.headers.get('cache-control'), 'no-store');
+    for (const path of ['/api/admin/login?returnTo=admin', '/api/gateway?__api_path=admin/login&returnTo=admin']) {
+      const response = await fetch(origin+path, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', Origin: 'https://frontend.example'},
+        body: JSON.stringify({email: 'admin@example.com', password: 'test-password'})
+      });
+      assert.equal(response.status, 200);
+      assert.deepEqual(await response.json(), {ok: true});
+      assert.match(response.headers.get('set-cookie'), /conference_session=valid/);
+    }
   } finally {
     frontend.closeAllConnections();
     backend.closeAllConnections();

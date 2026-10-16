@@ -6,6 +6,7 @@
   },
   "rewrites": [
     { "source": "/admin/login", "destination": "/api/admin-login" },
-    { "source": "/admin", "destination": "/api/admin" }
+    { "source": "/admin", "destination": "/api/admin" },
+    { "source": "/api/:path*", "destination": "/api/gateway?__api_path=:path*" }
   ]
 }

@@ -43,6 +43,14 @@ function proxy(req:IncomingMessage,res:ServerResponse,backend:URL,proxySecret:st
 export default async function handler(req:IncomingMessage,res:ServerResponse) {
   securityHeaders(res);
   try {
+    // Explicit rewrite parameters also work when the runtime exposes the destination URL.
+    const incoming=new URL(req.url||'/', 'https://frontend.local');
+    const route=incoming.searchParams.get('__api_path');
+    if(route!==null){
+      incoming.pathname='/api/'+route;
+      incoming.searchParams.delete('__api_path');
+      req.url=incoming.pathname+incoming.search;
+    }
     const backend=backendUrl();
     const proxySecret=process.env.API_PROXY_SECRET || '';
     if(process.env.NODE_ENV==='production' && proxySecret.length<32)throw new Error('Production requires API_PROXY_SECRET with at least 32 characters.');
