@@ -6,8 +6,8 @@
     "node": ">=22.13"
   },
   "scripts": {
-    "build": "node node_modules/typescript/bin/tsc -p tsconfig.json && node node_modules/typescript/bin/tsc -p tsconfig.server.json",
-    "typecheck": "node node_modules/typescript/bin/tsc -p tsconfig.json --noEmit && node node_modules/typescript/bin/tsc -p tsconfig.server.json --noEmit",
+    "build": "node node_modules/typescript/bin/tsc -p tsconfig.browser.json && node node_modules/typescript/bin/tsc -p tsconfig.server.json && node node_modules/typescript/bin/tsc -p tsconfig.json --noEmit",
+    "typecheck": "node node_modules/typescript/bin/tsc -p tsconfig.browser.json --noEmit && node node_modules/typescript/bin/tsc -p tsconfig.server.json --noEmit && node node_modules/typescript/bin/tsc -p tsconfig.json --noEmit",
     "start": "node --env-file-if-exists=.env dist/server.js",
     "dev": "npm run build && npm start",
     "test": "npm run build && node --test test/*.test.js"

@@ -5,11 +5,11 @@
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "rootDir": "src",
-    "outDir": "public",
+    "rootDir": ".",
+    "outDir": "dist/vercel",
     "strict": true,
     "noEmitOnError": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["api/**/*.ts"]
 }
